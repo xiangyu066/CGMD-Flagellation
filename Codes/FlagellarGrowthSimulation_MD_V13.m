@@ -3,15 +3,15 @@
 %      ===================================
 % CREATED: December 28, 2016
 % MODIFIED: April 7, 2017
-% EDITOR: À~¦º§Aªº¬Ü¤ò(X.Y. ZHUANG)
+% EDITOR: åš‡æ­»ä½ çš„çœ‰æ¯›(X.Y. ZHUANG)
 %
 % DESCRITION:
 %   <...>
 %
 % NOTES:
 %   - 
-%   - MD­pºâ¥u­pºâ«e«á¤@­Ó, ¦]¦¹¨Ï¥Î¯x°}¦V¶q¤Æ¨Ïmatlab¹Bºâ¥[³t
-%   - ±N°Êµe¦V¶q¤Æ
+%   - MDè¨ˆç®—åªè¨ˆç®—å‰å¾Œä¸€å€‹, å› æ­¤ä½¿ç”¨çŸ©é™£å‘é‡åŒ–ä½¿matlabé‹ç®—åŠ é€Ÿ
+%   - å°‡å‹•ç•«å‘é‡åŒ–
 %
 % COMPILE:
 %   - WIN7 SP1(64-bit)
@@ -30,7 +30,7 @@ DIFF_Const = 1e+3; % [nm^2/s]
 F_loading = 3; % pN
 drag_coef = KT/DIFF_Const;
 T_loading = 0.14; % generation time for one flagellin
-N = 200; % ¹w³]³q¹D¤º³Ì«á·|¦³ªºflagellin¼Æ¶q
+N = 200; % é è¨­é€šé“å…§æœ€å¾Œæœƒæœ‰çš„flagellinæ•¸é‡
 
 %% initialization
 output = ['V13_D',num2str(DIFF_Const),'_F',num2str(F_loading),'_E',num2str(epsilon/KT),'_T',num2str(T_loading),'_dt',num2str(dt),'.txt'];
@@ -39,17 +39,17 @@ monitor_timestep = 0.5;
 
 x = zeros(1,N);
 Vx = zeros(1,N);
-flag_flagellin = zeros(1,N); % ¬O§_¦³¸Ë¸üªºflagellin
-Fx_loading = zeros(1,N); % pump¬I¤O
+flag_flagellin = zeros(1,N); % æ˜¯å¦æœ‰è£è¼‰çš„flagellin
+Fx_loading = zeros(1,N); % pumpæ–½åŠ›
 
-flag_pump = 0; % ºÊ±±pump¤W¬O§_¦³flagellin
-flag_pump2 = 0 ;% ºÊ±±©T©wloading time§ìFlagellin
+flag_pump = 0; % ç›£æ§pumpä¸Šæ˜¯å¦æœ‰flagellin
+flag_pump2 = 0 ;% ç›£æ§å›ºå®šloading timeæŠ“Flagellin
 
-theta = linspace(0,2*pi,100); % ¥Î¨Óµe¶êªº
+theta = linspace(0,2*pi,100); % ç”¨ä¾†ç•«åœ“çš„
 
 %%
-tcount = 0; % ­pºâ¥Ø«e¬O²Ä´X­Ótimestep
-ncount = 0; % ­pºâ¥Ø«e¦³´X­Óflagellin¦b³q¹D¤º
+tcount = 0; % è¨ˆç®—ç›®å‰æ˜¯ç¬¬å¹¾å€‹timestep
+ncount = 0; % è¨ˆç®—ç›®å‰æœ‰å¹¾å€‹flagellinåœ¨é€šé“å…§
 
 fid = fopen(output,'w');
 fprintf(fid,'%.1f\t%.1f\t%d\n',0.0,0.0,0);
@@ -84,7 +84,7 @@ while (site < 8100)
         flag_pump2 = 0;
     end
     
-    if (ncount>0) % ­Y³q¹D¤º¦³flagellin¤~­pºâ¼Ò«¬
+    if (ncount>0) % è‹¥é€šé“å…§æœ‰flagellinæ‰è¨ˆç®—æ¨¡å‹
         
         %%%%%%% calculate force interaction (MD) %%%%%%%
         dx1 = x(flag_flagellin>0)-circshift(x(flag_flagellin>0),[0,1]);
@@ -106,18 +106,18 @@ while (site < 8100)
         
         % update next position and velocity
         Vx(flag_flagellin>0) = Fx/drag_coef;
-        if (Vx(ncount)<0 && flag_pump ==1) % Á×§K¦bpump¤Wªºflagellin­Ë°h
+        if (Vx(ncount)<0 && flag_pump ==1) % é¿å…åœ¨pumpä¸Šçš„flagellinå€’é€€
             Vx(ncount) = 0;
         end
         
         delta_x = sqrt(2*DIFF_Const*dt)*randn(1,N); % generate random step
-        if (flag_pump ==1) % ¦bpump¤Wªºflagellin¤£¨ü¼öÂZ°Ê
+        if (flag_pump ==1) % åœ¨pumpä¸Šçš„flagellinä¸å—ç†±æ“¾å‹•
             delta_x(ncount) = 0;
         end
          
         x(flag_flagellin>0) = x(flag_flagellin>0)+delta_x(flag_flagellin>0)+Vx(flag_flagellin>0).*dt;
         
-        % ­Y¤£¬O¦bpump¤Wªºflagellin­n­Ë°h¦^³q¹D, «h±j¨î°±¦bsigma/2ªº¦a¤è
+        % è‹¥ä¸æ˜¯åœ¨pumpä¸Šçš„flagellinè¦å€’é€€å›é€šé“, å‰‡å¼·åˆ¶åœåœ¨sigma/2çš„åœ°æ–¹
         bw = (x(flag_flagellin>0)>sigma/2);
         if (flag_pump == 1) 
             bw(ncount) = true;
@@ -125,7 +125,7 @@ while (site < 8100)
         
         x(flag_flagellin>0) = x(flag_flagellin>0).*bw + (sigma/2)*~bw;
         
-        % ÀË¬d¬O§_¦³¥i¥HÅÜ¦¨­y¹Dªº²É¤l¨Ã­«¸m¯x°}
+        % æª¢æŸ¥æ˜¯å¦æœ‰å¯ä»¥è®Šæˆè»Œé“çš„ç²’å­ä¸¦é‡ç½®çŸ©é™£
         Num_flagellin2site = sum(x(flag_flagellin>0)>site-sigma/2);
 
         if (Num_flagellin2site>0)
@@ -138,7 +138,7 @@ while (site < 8100)
         end
     end
     
-    % §PÂ_²æÂ÷pump¤W¬O§_ÁÙ¦³flagellin
+    % åˆ¤æ–·è„«é›¢pumpä¸Šæ˜¯å¦é‚„æœ‰flagellin
     if (ncount==0)
         flag_pump = 0;
     elseif(x(ncount)>sigma/2 && flag_pump ==1)
